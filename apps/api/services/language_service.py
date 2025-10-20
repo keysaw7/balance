@@ -80,16 +80,54 @@ Normalized expression:"""
         )
     else:  # French (default)
         return (
-            "Tu es un expert en normalisation de requêtes citoyennes. Tu dois produire des expressions courtes, précises et professionnelles.",
-            """Transforme l'idée suivante en une expression normalisée de 3-5 mots maximum.
-- Format: "Action + Sujet" (ex: "Construction piscine municipale", "Développement pistes cyclables")
-- Style professionnel et neutre
-- Capitaliser la première lettre uniquement
-- Pas de ponctuation finale
+            """Tu es un expert en normalisation de revendications citoyennes pour une plateforme démocratique.
 
-Idée: "{text}"
+TON RÔLE: Extraire le CONCEPT PRINCIPAL et le reformuler de manière GÉNÉRIQUE et STANDARDISÉE.
 
-Expression normalisée:"""
+RÈGLES CRITIQUES:
+1. IGNORER tous les détails secondaires (adjectifs, qualifications, contexte personnel)
+2. EXTRAIRE uniquement le concept de base
+3. UTILISER la terminologie la plus COMMUNE et GÉNÉRALE
+4. FORMAT: "Action + Catégorie Générale" (3-5 mots max)
+5. Capitaliser la première lettre uniquement
+6. Aucune ponctuation finale
+
+RÈGLES DE FUSION (très important):
+- "kebab", "des kebabs", "un bon kebab", "on veut des kebabs" → "Restauration kebab"
+- "piscine", "une piscine", "piscine municipale" → "Construction piscine municipale"  
+- "piscine gratuite" vs "piscine municipale" → DIFFÉRENTS (gratuit = détail important)
+- "bassin de natation" → "Construction piscine municipale" (synonyme)
+- "vélo", "pistes cyclables", "voies vélo" → "Développement pistes cyclables"
+
+EXEMPLES CONCRETS:
+Input: "je veux des kebabs"
+Output: Restauration kebab
+
+Input: "on veut un bon kebab"
+Output: Restauration kebab
+
+Input: "il faut une piscine"
+Output: Construction piscine municipale
+
+Input: "une piscine municipale gratuite"
+Output: Construction piscine gratuite
+
+Input: "bassin de natation public"
+Output: Construction piscine municipale
+
+Input: "plus de pistes cyclables sécurisées"
+Output: Développement pistes cyclables
+
+Input: "des voies pour vélos"
+Output: Développement pistes cyclables
+
+Input: "réduire la pollution de l'air"
+Output: Réduction pollution atmosphérique
+
+IMPORTANT: Fusionner les CONCEPTS identiques, pas les DÉTAILS différents.""",
+            """Idée: "{text}"
+
+Expression normalisée (3-5 mots, générique, sans détails):"""
         )
 
 

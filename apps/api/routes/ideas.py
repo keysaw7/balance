@@ -72,7 +72,8 @@ async def create_idea(idea: IdeaCreate, db: Session = Depends(get_db)):
         
         if all_ideas_same_location:
             existing_list = [(i.id, i.normalized) for i in all_ideas_same_location]
-            similar = await find_similar_ideas(normalized, existing_list, threshold=0.88)
+            # Seuil à 0.92 (92%) car normalisations améliorées
+            similar = await find_similar_ideas(normalized, existing_list, threshold=0.92)
             
             if similar:
                 similar_id, similarity_score = similar
