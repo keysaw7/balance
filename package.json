@@ -1,0 +1,54 @@
+{
+  "name": "balance",
+  "version": "0.1.0",
+  "description": "BALANCE - Plateforme d'Intelligence Collective",
+  "private": true,
+  "workspaces": [
+    "apps/web",
+    "apps/mobile",
+    "sdk/javascript"
+  ],
+  "scripts": {
+    "dev": "docker-compose up -d",
+    "build": "docker-compose build",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "npm run test:unit --workspaces",
+    "test:e2e": "npm run test:e2e --workspace=apps/web",
+    "lint": "npm run lint --workspaces",
+    "format": "npm run format --workspaces",
+    "clean": "docker-compose down -v --remove-orphans",
+    "setup": "./scripts/setup/init.sh",
+    "health": "./scripts/setup/health-check.sh"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/balance-ai/balance.git"
+  },
+  "keywords": [
+    "ai",
+    "democracy",
+    "open-source",
+    "policy",
+    "governance",
+    "collective-intelligence"
+  ],
+  "author": "BALANCE Community",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/balance-ai/balance/issues"
+  },
+  "homepage": "https://balance.ai"
+}

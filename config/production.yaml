@@ -1,0 +1,14 @@
+# Configuration de production
+debug: false
+log_level: "INFO"
+reload: false
+
+database:
+  echo: false
+  pool_size: 20
+  max_overflow: 30
+
+zeus:
+  debug: false
+  log_requests: false
+  cache_size: 1000

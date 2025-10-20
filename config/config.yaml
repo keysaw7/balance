@@ -1,0 +1,36 @@
+# Configuration de BALANCE
+app:
+  name: "BALANCE"
+  version: "0.1.0"
+  environment: "development"
+
+database:
+  host: "postgres"
+  port: 5432
+  name: "balance"
+  user: "balance"
+  password: "balance_dev"
+
+redis:
+  host: "redis"
+  port: 6379
+  db: 0
+
+zeus:
+  model_path: "/models"
+  max_workers: 4
+  timeout: 300
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  cors_origins: ["http://localhost:3000"]
+
+web:
+  host: "0.0.0.0"
+  port: 3000
+  api_url: "http://localhost:8000"
+
+monitoring:
+  prometheus_port: 9090
+  grafana_port: 3001

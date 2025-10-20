@@ -1,0 +1,39 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "rules/*.yml"
+
+scrape_configs:
+  - job_name: 'balance-api'
+    static_configs:
+      - targets: ['api-gateway:8000']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  - job_name: 'balance-zeus'
+    static_configs:
+      - targets: ['zeus:8001']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  - job_name: 'balance-data'
+    static_configs:
+      - targets: ['data-service:8002']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  - job_name: 'balance-governance'
+    static_configs:
+      - targets: ['governance-service:8003']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres:5432']
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']

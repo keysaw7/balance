@@ -1,0 +1,11 @@
+# Configuration de développement
+debug: true
+log_level: "DEBUG"
+reload: true
+
+database:
+  echo: true
+
+zeus:
+  debug: true
+  log_requests: true
