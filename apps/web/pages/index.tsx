@@ -113,26 +113,27 @@ const Home: NextPage = () => {
       <Head>
         <title>BALANCE - Partagez vos idées citoyennes</title>
         <meta name="description" content="Partagez vos idées et revendications pour votre ville, votre pays" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       </Head>
 
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="max-w-2xl w-full">
           {/* Logo */}
-          <div className="text-center mb-8">
-            <h1 className="text-5xl font-bold text-blue-600 mb-2">BALANCE</h1>
-            <p className="text-gray-600">Votre voix compte</p>
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-blue-600 mb-2">BALANCE</h1>
+            <p className="text-sm sm:text-base text-gray-600">Votre voix compte</p>
           </div>
 
           {/* Main Card */}
-          <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl p-6 sm:p-8">
             {/* Step Country */}
             {step === 'country' && (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <div className="text-center">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                     Choisissez votre pays
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="text-sm sm:text-base text-gray-600">
                     Où souhaitez-vous partager vos idées ?
                   </p>
                 </div>
@@ -157,13 +158,13 @@ const Home: NextPage = () => {
 
                 {/* Countries list */}
                 <div className="space-y-3">
-                  <p className="text-sm text-gray-600 font-medium">Suggestions :</p>
-                  <div className="grid grid-cols-2 gap-3">
+                  <p className="text-xs sm:text-sm text-gray-600 font-medium">Suggestions :</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                     {suggestedCountries.map((c) => (
                       <button
                         key={c}
                         onClick={() => handleCountrySelect(c)}
-                        className="text-left py-3 px-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition"
+                        className="text-left py-3 px-3 sm:px-4 border-2 border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition"
                       >
                         <span className="text-sm font-medium text-gray-900">{c}</span>
                       </button>
@@ -208,26 +209,26 @@ const Home: NextPage = () => {
 
             {/* Step City */}
             {step === 'city' && country && (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <button
                   onClick={() => {
                     setStep('country');
                     setCity('');
                     setCustomCity('');
                   }}
-                  className="text-blue-600 hover:text-blue-700 flex items-center gap-2"
+                  className="text-blue-600 hover:text-blue-700 flex items-center gap-2 text-sm sm:text-base"
                 >
                   ← Retour
                 </button>
 
                 <div className="text-center">
-                  <div className="inline-block bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm mb-4">
+                  <div className="inline-block bg-blue-100 text-blue-700 px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm mb-4">
                     {country}
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
                     Quelle est votre ville ?
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="text-sm sm:text-base text-gray-600">
                     Entrez le nom de votre ville
                   </p>
                 </div>
@@ -264,7 +265,7 @@ const Home: NextPage = () => {
           </div>
 
           {/* Footer */}
-          <p className="text-center text-gray-600 text-sm mt-6">
+          <p className="text-center text-gray-600 text-xs sm:text-sm mt-6 px-4">
             Projet open source • Anonyme • Transparent
           </p>
         </div>
