@@ -8,6 +8,7 @@ import hashlib
 from database import get_db, Idea, init_db
 from services.openai_service import normalize_idea_with_ai
 from services.embeddings_service import find_similar_ideas
+from services.geocoding_service import validate_city
 
 router = APIRouter(prefix="/ideas", tags=["ideas"])
 
@@ -43,23 +44,30 @@ async def create_idea(idea: IdeaCreate, db: Session = Depends(get_db)):
     Soumettre une nouvelle idée.
     L'idée est normalisée avec OpenAI et fusionnée si elle existe déjà.
     Utilise les embeddings pour une détection sémantique avancée.
+    La ville est normalisée via Nominatim pour éviter les doublons (casse, orthographe).
     """
-    # 1. Normalisation avec OpenAI gpt-4o-mini (multilingue)
-    normalized = await normalize_idea_with_ai(idea.text)
-    idea_id = await generate_idea_id(idea.text, idea.country, idea.city, normalized)
+    # 0. NORMALISER LA VILLE via Nominatim pour éviter "argenteuil" != "Argenteuil"
+    city_validation = await validate_city(idea.city, idea.country)
+    normalized_city = city_validation.get("normalized_name", idea.city.strip().title())
     
-    # 2. Chercher si l'idée existe déjà (même normalisation + même lieu)
+    print(f"🏙️ Ville normalisée: '{idea.city}' → '{normalized_city}'")
+    
+    # 1. Normalisation de l'idée avec OpenAI gpt-4o-mini (multilingue)
+    normalized = await normalize_idea_with_ai(idea.text)
+    idea_id = await generate_idea_id(idea.text, idea.country, normalized_city, normalized)
+    
+    # 2. Chercher si l'idée existe déjà (même normalisation + même lieu normalisé)
     existing = db.query(Idea).filter(
         Idea.normalized == normalized,
         Idea.country == idea.country,
-        Idea.city == idea.city
+        Idea.city == normalized_city  # Utiliser la ville normalisée
     ).first()
     
     # 3. Si pas trouvé par normalisation, essayer avec embeddings (détection sémantique)
     if not existing:
         all_ideas_same_location = db.query(Idea).filter(
             Idea.country == idea.country,
-            Idea.city == idea.city
+            Idea.city == normalized_city  # Utiliser la ville normalisée
         ).all()
         
         if all_ideas_same_location:
@@ -90,14 +98,14 @@ async def create_idea(idea: IdeaCreate, db: Session = Depends(get_db)):
             createdAt=existing.created_at.isoformat()
         )
     
-    # Créer nouvelle idée
+    # Créer nouvelle idée avec ville normalisée
     new_idea = Idea(
         id=idea_id,
         text=idea.text,
         normalized=normalized,
         count=1,
         country=idea.country,
-        city=idea.city
+        city=normalized_city  # Utiliser la ville normalisée
     )
     
     db.add(new_idea)
@@ -123,13 +131,19 @@ async def get_ideas(
 ):
     """
     Récupérer les idées pour un lieu donné.
+    Normalise automatiquement le nom de ville pour éviter les problèmes de casse.
     """
     query = db.query(Idea)
     
     if country:
         query = query.filter(Idea.country == country)
+    
     if city:
-        query = query.filter(Idea.city == city)
+        # Normaliser la ville pour la recherche (insensible à la casse)
+        city_validation = await validate_city(city, country or "France")
+        normalized_city = city_validation.get("normalized_name", city.strip().title())
+        query = query.filter(Idea.city == normalized_city)
+        print(f"🔍 Recherche d'idées pour ville: '{city}' → '{normalized_city}'")
     
     ideas = query.all()
     

@@ -60,11 +60,18 @@ const Home: NextPage = () => {
         const data = await response.json();
         
         if (data.valid) {
-          // Ville validée !
+          // Utiliser le nom normalisé pour éviter les doublons
+          if (data.normalized_name) {
+            setCustomCity(data.normalized_name);
+          }
+          
           if (data.fallback) {
             console.log('Validation en mode dégradé (timeout ou erreur API)');
           } else {
-            console.log(`Ville validée: ${data.display_name} (importance: ${data.importance})`);
+            console.log(`Ville validée: ${data.display_name}`);
+            console.log(`  - Nom normalisé: ${data.normalized_name}`);
+            console.log(`  - OSM ID: ${data.osm_id}`);
+            console.log(`  - Code postal: ${data.postal_code || 'N/A'}`);
           }
           return true;
         } else {
@@ -73,11 +80,14 @@ const Home: NextPage = () => {
       } else {
         // En cas d'erreur API, on accepte quand même (mode dégradé)
         console.warn('API validation failed, fallback mode');
+        // Normaliser manuellement
+        setCustomCity(cityName.trim().charAt(0).toUpperCase() + cityName.trim().slice(1).toLowerCase());
         return cityName.trim().length > 2;
       }
     } catch (error) {
       console.error('Validation error:', error);
-      // En cas d'erreur, on accepte quand même
+      // En cas d'erreur, normaliser manuellement
+      setCustomCity(cityName.trim().charAt(0).toUpperCase() + cityName.trim().slice(1).toLowerCase());
       return cityName.trim().length > 2;
     } finally {
       setIsValidating(false);

@@ -13,9 +13,12 @@ router = APIRouter(prefix="/geocoding", tags=["geocoding"])
 class CityValidationResponse(BaseModel):
     valid: bool
     display_name: Optional[str] = None
+    normalized_name: Optional[str] = None
+    osm_id: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     importance: Optional[float] = None
+    postal_code: Optional[str] = None
     fallback: Optional[bool] = False
     error: Optional[str] = None
 

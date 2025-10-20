@@ -15,6 +15,7 @@ NOMINATIM_HEADERS = {
 async def validate_city(city: str, country: str) -> Dict[str, any]:
     """
     Valide qu'une ville existe dans un pays donné via Nominatim.
+    Normalise le nom de la ville pour éviter les doublons (casse, accents, etc.)
     
     Args:
         city: Nom de la ville
@@ -23,10 +24,13 @@ async def validate_city(city: str, country: str) -> Dict[str, any]:
     Returns:
         {
             "valid": bool,
-            "display_name": str,  # Nom complet formaté
+            "display_name": str,     # Nom complet formaté
+            "normalized_name": str,  # Nom normalisé pour la base de données
+            "osm_id": str,          # Identifiant unique OpenStreetMap
             "latitude": float,
             "longitude": float,
-            "importance": float   # Score de pertinence (0-1)
+            "importance": float,
+            "postal_code": str      # Code postal si disponible
         }
     """
     if not city.strip() or not country.strip():
@@ -56,12 +60,26 @@ async def validate_city(city: str, country: str) -> Dict[str, any]:
                     valid_types = ["city", "town", "village", "municipality", "administrative"]
                     
                     if any(t in place_type for t in valid_types) or result.get("importance", 0) > 0.3:
+                        address = result.get("address", {})
+                        
+                        # Extraire le nom officiel de la ville
+                        city_name = (
+                            address.get("city") or 
+                            address.get("town") or 
+                            address.get("village") or 
+                            address.get("municipality") or
+                            result.get("name")
+                        )
+                        
                         return {
                             "valid": True,
                             "display_name": result.get("display_name", f"{city}, {country}"),
+                            "normalized_name": city_name,  # Nom officiel normalisé
+                            "osm_id": str(result.get("osm_id", "")),
                             "latitude": float(result.get("lat", 0)),
                             "longitude": float(result.get("lon", 0)),
                             "importance": float(result.get("importance", 0)),
+                            "postal_code": address.get("postcode", ""),
                             "type": place_type
                         }
                 
@@ -71,23 +89,32 @@ async def validate_city(city: str, country: str) -> Dict[str, any]:
                 
     except asyncio.TimeoutError:
         # Timeout = on accepte quand même (mode dégradé)
+        # Normaliser manuellement pour cohérence
+        normalized = city.strip().title()
         return {
             "valid": True,
-            "display_name": f"{city}, {country}",
+            "display_name": f"{normalized}, {country}",
+            "normalized_name": normalized,
+            "osm_id": "",
             "latitude": 0,
             "longitude": 0,
             "importance": 0,
+            "postal_code": "",
             "fallback": True
         }
     except Exception as e:
         print(f"Geocoding error: {e}")
-        # En cas d'erreur, on accepte quand même (mode dégradé)
+        # En cas d'erreur, normaliser quand même
+        normalized = city.strip().title()
         return {
             "valid": True,
-            "display_name": f"{city}, {country}",
+            "display_name": f"{normalized}, {country}",
+            "normalized_name": normalized,
+            "osm_id": "",
             "latitude": 0,
             "longitude": 0,
             "importance": 0,
+            "postal_code": "",
             "fallback": True
         }
 
